@@ -1,0 +1,16 @@
+name: pq
+version: 0.1.0
+
+authors:
+  - Aurélien Bidon <abidon@protonmail.com>
+
+description: |
+  A "crystal-db"-compliant postgres driver
+
+dependencies:
+  db:
+    github: crystal-lang/crystal-db
+  libpq:
+    github: abidon/libpq.cr
+
+license: MIT
