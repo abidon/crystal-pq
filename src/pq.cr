@@ -249,7 +249,7 @@ class PQ::ResultSet < DB::ResultSet
         when LibPQ::TypeOid::BYTEA # TODO
         when LibPQ::TypeOid::CHAR, LibPQ::TypeOid::BPCHAR
             return v[0]
-        when LibPQ::TypeOid::REGPROC, LibPQ::TypeOid::TEXT, LibPQ::TypeOid::VARCHAR, LibPQ::TypeOid::NAME, LibPQ::TypeOid::MACADDR, LibPQ::TypeOid::INET, LibPQ::TypeOid::CIDR, LibPQ::TypeOid::UNKNOWN
+        when LibPQ::TypeOid::REGPROC, LibPQ::TypeOid::TEXT, LibPQ::TypeOid::VARCHAR, LibPQ::TypeOid::NAME, LibPQ::TypeOid::MACADDR, LibPQ::TypeOid::INET, LibPQ::TypeOid::CIDR, LibPQ::TypeOid::UNKNOWN, LibPQ::TypeOid::UUID
             return v
         when LibPQ::TypeOid::INT8
             return v.to_i64
@@ -360,7 +360,6 @@ class PQ::ResultSet < DB::ResultSet
         when LibPQ::TypeOid::REGROLE # TODO
         when LibPQ::TypeOid::REGNAMESPACE # TODO
         when LibPQ::TypeOid::REGTYPEARRAY # TODO
-        when LibPQ::TypeOid::UUID # TODO
         when LibPQ::TypeOid::LSN # TODO
         when LibPQ::TypeOid::TSVECTOR # TODO
         when LibPQ::TypeOid::GTSVECTOR # TODO
