@@ -181,7 +181,7 @@ class PQ::UnpreparedStatement < DB::Statement
             result = LibPQ.exec_params @connection.as(PQ::Connection).conn, @sql, args.size, Pointer(LibPQ::Oid).null, casted_args.to_unsafe, Pointer(Int32).null, Pointer(Int32).null, 0
             status = LibPQ.result_status result
             if status == LibPQ::ExecStatusType::COMMAND_OK
-                DB::ExecResult.new String.new(LibPQ.cmd_tuples result).to_i64, 0_i64
+                DB::ExecResult.new (String.new(LibPQ.cmd_tuples result).to_i64 rescue LibPQ.ntuples(result).to_i64), 0_i64
             elsif status == LibPQ::ExecStatusType::TUPLES_OK
                 affected_rows = String.new(LibPQ.cmd_tuples result).to_i64
                 if LibPQ.nfields(result) == 1 && affected_rows > 0
