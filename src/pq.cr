@@ -391,6 +391,22 @@ class PQ::ResultSet < DB::ResultSet
         raise Exception.new "Unknown type OID: #{LibPQ::TypeOid.new LibPQ.ftype(@result, ci)} for value '#{v}'"
     end
 
+    def read(t : UInt8.class) : UInt8
+      value = read(Int).to_u8
+    end
+
+    def read(t : UInt16.class) : UInt16
+      value = read(Int).to_u16
+    end
+
+    def read(t : UInt32.class) : UInt32
+      value = read(Int).to_u32
+    end
+
+    def read(t : UInt64.class) : UInt64
+      value = read(Int).to_u64
+    end
+
     def read_raw : Tuple(String?, Int64, Int32)
         if @column_index >= @column_count
             raise Exception.new "[PQ_Error]: Unable to read value for out-of-range column !"
