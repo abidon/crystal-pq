@@ -4,35 +4,52 @@ require "xml"
 require "libpq"
 
 struct PQ::Point
-    getter x
-    getter y
+    JSON.mapping({
+        x: {type: Float64, setter: false},
+        y: {type: Float64, setter: false},
+    })
+
     def initialize(@x : Float64, @y : Float64)
     end
 end
 
 struct PQ::Line
-    getter a
-    getter b
-    getter c
+    JSON.mapping({
+        a: {type: Float64, setter: false},
+        b: {type: Float64, setter: false},
+        c: {type: Float64, setter: false},
+    })
+
     def initialize(@a : Float64, @b : Float64, @c : Float64)
     end
 end
 
 struct PQ::Segment
-    getter from
-    getter to
+    JSON.mapping({
+        from: {type: PQ::Point, setter: false},
+        to: {type: PQ::Point, setter: false},
+    })
+    
     def initialize(@from : Point, @to : Point)
     end
 end
 
 struct PQ::Box
-    getter top_right
-    getter bottom_left
+    JSON.mapping({
+        top_right: {type: PQ::Point, setter: false},
+        bottom_left: {type: PQ::Point, setter: false},
+    })
+
     def initialize(@top_right : Point, @bottom_left : Point)
     end
 end
 
 struct PQ::Path
+    JSON.mapping({
+        points: {type: Array(PQ::Point), setter: false},
+        closed: {type: Bool, setter: false},
+    })
+
     getter points
     getter closed
     def initialize(@points : Array(Point), @closed : Bool = true)
@@ -40,8 +57,11 @@ struct PQ::Path
 end
 
 struct PQ::Circle
-    getter center
-    getter radius
+    JSON.mapping({
+        center: {type: PQ::Point, setter: false},
+        radius: {type: Float64, setter: false},
+    })
+
     def initialize(@center : Point, @radius : Float64)
     end
 end
@@ -53,10 +73,18 @@ struct PQ::MacAddress
 
     protected def initialize(@s : String)
     end
+
+    def to_json(builder)
+        builder.scalar(@s)
+    end
 end
 
 struct PQ::AclItem
     def initialize(@s : String)
+    end
+
+    def to_json(builder)
+        builder.scalar(@s)
     end
 end
 
@@ -68,6 +96,14 @@ struct PQ::Date
 
     def initialize(@year : UInt16, @month : UInt16, @day : UInt16)
     end
+
+    def iso8601
+        "#{@year.to_s.rjust(4, '0')}-#{@month.to_s.rjust(2, '0')}-#{@day.to_s.rjust(2, '0')}"
+    end
+    
+    def to_json(builder)
+        builder.scalar(iso8601)
+    end
 end
 
 struct PQ::Time
@@ -78,10 +114,29 @@ struct PQ::Time
 
     def initialize(@hour : UInt8, @minutes : UInt8, @seconds : UInt8, @micros : UInt32, @tz : Int32)
     end
+
+    def iso8601
+        micros = @micros == 0 ? "" : ".#{@micros.to_s.rjust(6, '0')}"
+        tz = "+#{@tz.to_s.rjust(4, '0')}"
+        "T#{@hout.to_s.rjust(2, '0')}-#{@minutes.to_s.rjust(2, '0')}-#{@seconds.to_s.rjust(2, '0')}#{micros}"
+    end
+    
+    def to_json(builder)
+        builder.scalar(iso8601)
+    end
 end
 
 struct PQ::Interval
-    def initialize(@years : Int32, @months : Int32, @days : Int32, @hours : Int32, @minutes : Int32, @seconds : Int32, @microseconds : Int32)
+    def initialize(@years : Int32, @months : Int32, @days : Int32, @hours : Int32, @minutes : Int32, @seconds : Int32, @micros : Int32)
+    end
+
+    def iso8601
+        micros = @micros == 0 ? "" : ".#{@micros.to_s.rjust(6, '0')}"
+        return "P#{@years}Y#{@months}M#{@days}DT#{@hours}H#{@minutes}M#{@seconds}#{micros}S"
+    end
+    
+    def to_json(builder)
+        builder.scalar(iso8601)
     end
 end
 
